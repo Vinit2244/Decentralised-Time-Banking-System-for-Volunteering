@@ -817,7 +817,6 @@ window.addEventListener('load', async () => {
         web3 = new Web3(window.ethereum);
 		try {
 			const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-			console.log('Connected accounts:', accounts);
 		} catch (error) {
 			console.error('Error connecting to MetaMask:', error);
 		}
@@ -858,6 +857,7 @@ async function registerVolunteer() {
         await contract.methods.registerVolunteer(username, password, bio)
             .send({ from: accounts[0] });
         alert("Volunteer registered successfully.");
+		window.location.href = './html/volunteer-login.html';
     } catch (error) {
         console.error(error);
         alert("Error registering volunteer: " + error.message);
@@ -877,6 +877,7 @@ async function registerCompany() {
         await contract.methods.registerCompany(username, password)
             .send({ from: accounts[0] });
         alert("Company registered successfully.");
+		window.location.href = './html/company-login.html';
     } catch (error) {
         console.error(error);
         alert("Error registering company: " + error.message);
@@ -903,7 +904,7 @@ async function loginCompany() {
         const validCompany = await contract.methods.checkCompany(acc, username, password).call();
 
         if (validCompany) {
-            window.location.href = "./html/dashboard.html"; // Redirect to volunteer dashboard
+            window.location.href = "./company-dashboard.html"; // Redirect to volunteer dashboard
         } else {
             alert("Invalid password.");
         }
@@ -931,7 +932,7 @@ async function loginVolunteer() {
         const validVolunteer = await contract.methods.checkVolunteer(acc, username, password).call();
 
         if (validVolunteer) {
-            window.location.href = "./html/volunteer-dashboard.html"; // Redirect to volunteer dashboard
+            window.location.href = "./volunteer-dashboard.html"; // Redirect to volunteer dashboard
         } else {
             alert("Invalid password.");
         }

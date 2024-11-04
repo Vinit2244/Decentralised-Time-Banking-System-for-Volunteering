@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" href="./media/company-icon.png" type="image/png">
+    <link rel="icon" href="../media/company-icon.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <title>Register Company</title>
+    <link rel="stylesheet" href="../css/style.css">
     <style>
         /* Add some styles for the header */
         .header {
@@ -61,7 +61,7 @@
         </div>
         <img src="../media/profile.jpg" alt="Profile" onclick="toggleDropdown()">
         <div class="dropdown" id="dropdownMenu">
-            <a href="index.html">Home</a> <!-- Link to go back to home -->
+            <a href="../index.html">Home</a> <!-- Link to go back to home -->
         </div>
     </header>
 
@@ -85,11 +85,13 @@
         }
     </script>
     <div class="container">
-        <h1>Login Page</h1>
-        
-        <button onclick="window.location.href='./html/volunteer-login.html'">Login as Volunteer</button>
-        <button onclick="window.location.href='./html/company-login.html'">Login as Company</button>
+        <h1>Register as Company</h1>
+        <input type="text" id="newCompanyUsername" placeholder="New Username">
+        <input type="password" id="newCompanyPassword" placeholder="New Password">
+        <button onclick="registerCompany()">Register</button>
+        <p>Already registered? <a href="./company-login.html">Click here to login</a></p>
     </div>
+    <script src="../js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
 </body>
 </html>

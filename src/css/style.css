@@ -73,7 +73,7 @@ button:hover {
 
 .dashboard-container {
     width: 90%;
-    max-width: 800px;
+    max-width: 1070px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -103,7 +103,8 @@ button {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 200px;
     position: relative;
-    height: 510px;
+    height: 420px;
+    width: 300px;
 }
 
 .opportunity-card button {

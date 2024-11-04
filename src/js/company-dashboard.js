@@ -974,11 +974,12 @@ async function loadOpportunities() {
 					<button 
 					  style="
 					  position: absolute;
-						left: 107px;
+						left: 150px;
 						bottom: 10px;
 						background-color: #9999ff; 
 						width: 33%; 
 						padding: 8px;
+						height: 44px;
 						border: none;
 						border-radius: 4px;
 						cursor: pointer;
@@ -994,7 +995,7 @@ async function loadOpportunities() {
 						right: 10px;
 						bottom: 10px;
 						width: 15%;
-						height: 45px;
+						height: 44px;
 						padding: 8px;
 						border: none;
 						border-radius: 4px;

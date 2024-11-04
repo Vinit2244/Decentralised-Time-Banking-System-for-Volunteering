@@ -20,7 +20,7 @@ contract CompanyRegistry {
         uint256 hoursRequired;
         uint256 pointsAwarded;
         uint256 maxVolunteers;
-        address[] volunteerAddresses; // List of volunteers who applied
+        address[] volunteerAddresses;
         int8[] accepted; // -1 = pending, 0 = rejected, 1 = accepted
         int8[] completed; // 0 = incomplete, 1 = complete
         string description;
@@ -101,6 +101,73 @@ contract CompanyRegistry {
         }
         
         return totalPoints;
+    }
+
+    // Function to get the application status of a volunteer for a specific opportunity
+    function getApplicationStatus(address volunteerAddress, uint256 uid) public view returns (int8) {
+        // Iterate through all registered companies
+        for (uint256 i = 0; i < registeredCompanies.length; i++) {
+            address companyAddress = registeredCompanies[i];
+            Opportunity[] storage opportunities = companyOpportunities[companyAddress];
+
+            // Iterate through the company's opportunities
+            for (uint256 j = 0; j < opportunities.length; j++) {
+                if (opportunities[j].uid == uid) {
+                    // Find the index of the volunteer's address in the volunteerAddresses array
+                    for (uint256 k = 0; k < opportunities[j].volunteerAddresses.length; k++) {
+                        if (opportunities[j].volunteerAddresses[k] == volunteerAddress) {
+                            return opportunities[j].accepted[k]; // Return the corresponding status
+                        }
+                    }
+                }
+            }
+        }
+        // If no matching opportunity or volunteer found, return -1 (indicating no application)
+        return -1; 
+    }
+
+    // Function to accept a volunteer's application for a specific opportunity
+    function acceptApplication(address volunteerAddress, uint256 uid) public {
+        Opportunity storage opportunity = findOpportunityByUid(uid);
+        // require(opportunity.company == msg.sender, "Only the company can accept applications.");
+
+        // Find the index of the volunteer in the volunteerAddresses array
+        for (uint256 i = 0; i < opportunity.volunteerAddresses.length; i++) {
+            if (opportunity.volunteerAddresses[i] == volunteerAddress) {
+                opportunity.accepted[i] = 1; // Change status to accepted
+                return;
+            }
+        }
+        revert("Volunteer not found in the application list.");
+    }
+
+    // Function to reject a volunteer's application for a specific opportunity
+    function rejectApplication(address volunteerAddress, uint256 uid) public {
+        Opportunity storage opportunity = findOpportunityByUid(uid);
+        require(opportunity.company == msg.sender, "Only the company can reject applications.");
+
+        // Find the index of the volunteer in the volunteerAddresses array
+        for (uint256 i = 0; i < opportunity.volunteerAddresses.length; i++) {
+            if (opportunity.volunteerAddresses[i] == volunteerAddress) {
+                opportunity.accepted[i] = 0; // Change status to rejected
+                return;
+            }
+        }
+        revert("Volunteer not found in the application list.");
+    }
+
+    // Helper function to find an opportunity by UID
+    function findOpportunityByUid(uint256 uid) internal view returns (Opportunity storage) {
+        // Iterate through all registered companies
+        for (uint256 i = 0; i < registeredCompanies.length; i++) {
+            Opportunity[] storage opportunities = companyOpportunities[registeredCompanies[i]];
+            for (uint256 j = 0; j < opportunities.length; j++) {
+                if (opportunities[j].uid == uid) {
+                    return opportunities[j];
+                }
+            }
+        }
+        revert("Opportunity not found.");
     }
 
     // Get all registered volunteer addresses
