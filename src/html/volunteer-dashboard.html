@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard</title>
+    <link rel="stylesheet" href="../css/volunteer-style.css">
+    <style>
+        /* Add styles for the header */
+        .header {
+            margin-top: 8px;
+            width: 96%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            position: relative; /* Ensure header is positioned relatively for dropdown */
+        }
+
+        .header img {
+            width: 40px; /* Adjust as needed */
+            height: 40px; /* Adjust as needed */
+            border-radius: 50%; /* Make it a circle */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        .dropdown {
+            display: none; /* Hidden by default */
+            position: absolute; /* Make dropdown position absolute */
+            right: 20px; /* Align with the profile image */
+            top: 60px; /* Position it below the header */
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center; /* Center align the items */
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <h2><img src="../media/company-icon.png" alt="Volunteer Icon" style="width: 30px; height: 30px; vertical-align: middle;"> Volunteer Connect</h2>
+        </div>
+        <img src="../media/profile.jpg" alt="Profile" onclick="toggleDropdown()">
+        <div class="dropdown" id="dropdownMenu">
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </header>
+
+    <h1>Volunteer Dashboard</h1>
+
+    <!-- Loading spinner -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Please Wait...</p>
+    </div>
+
+    <div id="opportunities-container" class="opportunities-container">
+        <!-- Cards will be dynamically generated here -->
+    </div>
+
+    <script src="../js/volunteer-dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById("dropdownMenu");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function logout() {
+            // Navigate back to index.html
+            window.location.href = "../index.html";
+        }
+
+        // Close dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.header img')) {
+                const dropdown = document.getElementById("dropdownMenu");
+                if (dropdown.style.display === "block") {
+                    dropdown.style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

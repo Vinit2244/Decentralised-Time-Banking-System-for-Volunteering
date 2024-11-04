@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Add some styles for the header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            position: relative; /* Make header a relative position for dropdown */
+        }
+
+        .header img {
+            width: 40px; /* Adjust as needed */
+            height: 40px; /* Adjust as needed */
+            border-radius: 50%; /* Make it a circle */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        .dropdown {
+            display: none; /* Hidden by default */
+            position: absolute; /* Make dropdown position absolute */
+            right: 20px; /* Align with the profile image */
+            top: 60px; /* Position it below the header */
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center; /* Center align the items */
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <h2><img src="../media/company-icon.png" alt="Company Icon" style="width: 30px; height: 30px; vertical-align: middle;"> Volunteer Connect</h2>
+        </div>
+        <img src="../media/profile.jpg" alt="Profile" onclick="toggleDropdown()">
+        <div class="dropdown" id="dropdownMenu">
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <h1>Company Dashboard</h1>
+        <button id="createOpportunityBtn" onclick="showOpportunityForm()">+ Create New Opportunity</button>
+        
+        <div id="opportunityForm" class="modal" style="z-index: 1000;">
+            <div class="modal-content">
+                <span class="close" onclick="closeOpportunityForm()">&times;</span>
+                <h2>Create Volunteering Opportunity</h2>
+                <input type="text" id="opportunityName" placeholder="Opportunity Name">
+                <input type="text" id="location" placeholder="Location">
+                <div>
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <br>
+                <div>
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate">
+                </div>
+                <br>
+                <div>
+                    <label for="lastDateToRegister">Last Date to Register:</label>
+                    <input type="date" id="lastDateToRegister">
+                </div>
+                <br>
+                <div>
+                    <label for="hoursRequired">Work Hours:</label>
+                    <input type="number" id="hoursRequired" placeholder="Work Hours">
+                </div>
+                <br>
+                <div>
+                    <label for="pointsAwarded">Points Awarded:</label>
+                    <input type="number" id="pointsAwarded" placeholder="Points Awarded">
+                </div>
+                <br>
+                <div>
+                    <label for="maxVolunteers">Max Volunteers:</label>
+                    <input type="number" id="maxVolunteers" placeholder="Max Volunteers">
+                </div>
+                <br>
+                <div>
+                    <label for="description">Description:</label>
+                    <textarea id="description" rows="4" placeholder="Enter the description here..." required></textarea>
+                </div>
+                <button onclick="createOpportunity()">Create Opportunity</button>
+            </div>
+        </div>
+        
+        <div id="opportunitiesContainer" class="opportunities-container"></div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Creating opportunity, please wait...</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById("dropdownMenu");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function logout() {
+            // Navigate back to index.html
+            window.location.href = "../index.html";
+        }
+
+        // Close dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.header img')) {
+                const dropdown = document.getElementById("dropdownMenu");
+                if (dropdown.style.display === "block") {
+                    dropdown.style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company and Volunteer Login</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Login Page</h1>
+        
+        <button onclick="showVolunteerLogin()">Login as Volunteer</button>
+        <button onclick="showCompanyLogin()">Login as Company</button>
+
+        <!-- Company Login Form -->
+        <div id="companyLogin" style="display: none;">
+            <h2>Company Login</h2>
+            <input type="text" id="companyUsername" placeholder="Enter Username">
+            <input type="password" id="companyPassword" placeholder="Enter Password">
+            <button onclick="loginCompany()">Login</button>
+            <p>Or register a new company:</p>
+            <input type="text" id="newCompanyUsername" placeholder="New Username">
+            <input type="password" id="newCompanyPassword" placeholder="New Password">
+            <button onclick="registerCompany()">Register New Company</button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Registering company, please wait...</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>
