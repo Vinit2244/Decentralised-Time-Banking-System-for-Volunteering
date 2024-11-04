@@ -143,5 +143,26 @@
             }
         }
     </script>
+    <div id="volunteerModal" class="volunteer-list-modal" style="display: none;">
+        <div class="volunteer-list-modal-content">
+            <span class="close" onclick="closeVolunteerModal()">&times;</span>
+            <h2>Volunteers Applied</h2>
+            <table id="volunteerTable">
+                <thead>
+                    <tr>
+                        <th>Wallet Address</th>
+                        <th>Biodata</th>
+                        <th>Accept/Reject</th>
+                    </tr>
+                </thead>
+                <tbody id="volunteerTableBody">
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+            
+            <!-- Button placed inside the modal content -->
+            <button id="SubmitVolunteerSelectionsButton" onclick="submitVolunteerSelections()" style="margin-top: 20px; width: 100%;">Submit</button>
+        </div>
+    </div>    
 </body>
 </html>

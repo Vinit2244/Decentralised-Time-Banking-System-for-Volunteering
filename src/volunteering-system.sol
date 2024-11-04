@@ -9,6 +9,8 @@ contract CompanyRegistry {
     }
 
     struct Opportunity {
+        uint256 uid;
+        address company;
         string companyName;
         string name;
         string location;
@@ -57,6 +59,9 @@ contract CompanyRegistry {
         return addressToUsername[_wallet];
     }
 
+    // State variable to track the total number of opportunities
+    uint256 public totalOpportunities;
+
     // Add a new volunteering opportunity
     function addOpportunity(
         string memory _name,
@@ -72,7 +77,12 @@ contract CompanyRegistry {
         // Get the username of the company using the caller's address
         string memory _companyName = getUsernameByAddress(msg.sender);
 
+        // Increment the total opportunities counter to get a unique uid
+        totalOpportunities++;
+
         Opportunity memory newOpportunity = Opportunity({
+            uid: totalOpportunities,  // Assign the unique uid
+            company: msg.sender,
             companyName: _companyName,
             name: _name,
             location: _location,
@@ -85,33 +95,50 @@ contract CompanyRegistry {
             volunteerAddresses: new address[](0),
             description: _description
         });
-        
+
         companyOpportunities[msg.sender].push(newOpportunity);
     }
 
-    // Updated function for volunteers to apply for an opportunity
-    function applyForOpportunity(address _company, uint256 _oppIndex) public {
-        require(_oppIndex < companyOpportunities[_company].length, "Invalid index");
-        
-        Opportunity storage opp = companyOpportunities[_company][_oppIndex];
-        
-        // Check if the opportunity is already full
-        require(opp.volunteerAddresses.length < opp.maxVolunteers, "Opportunity has been filled");
-        
-        // Check if the volunteer is already in the list
-        for (uint256 i = 0; i < opp.volunteerAddresses.length; i++) {
-            require(opp.volunteerAddresses[i] != msg.sender, "Already applied for this opportunity");
+    // Updated function for volunteers to apply for an opportunity using uid
+    function applyForOpportunity(address _company, uint256 _uid) public {
+        // Find the opportunity by uid
+        Opportunity[] storage opportunities = companyOpportunities[_company];
+        bool opportunityFound = false;
+
+        for (uint256 i = 0; i < opportunities.length; i++) {
+            if (opportunities[i].uid == _uid) {
+                Opportunity storage opp = opportunities[i];
+                opportunityFound = true;
+
+                // Check if the opportunity is already full
+                require(opp.volunteerAddresses.length < opp.maxVolunteers, "Opportunity has been filled");
+
+                // Check if the volunteer is already in the list
+                for (uint256 j = 0; j < opp.volunteerAddresses.length; j++) {
+                    require(opp.volunteerAddresses[j] != msg.sender, "Already applied for this opportunity");
+                }
+
+                // Add volunteer address to the list
+                opp.volunteerAddresses.push(msg.sender);
+                break; // Exit the loop once we found and processed the opportunity
+            }
         }
 
-        // Add volunteer address to the list
-        opp.volunteerAddresses.push(msg.sender);
+        require(opportunityFound, "Opportunity not found");
     }
 
-    // Get the number of available spots for an opportunity
-    function getAvailableSpots(address _company, uint256 _oppIndex) public view returns (uint256) {
-        require(_oppIndex < companyOpportunities[_company].length, "Invalid index");
-        Opportunity storage opp = companyOpportunities[_company][_oppIndex];
-        return opp.maxVolunteers - opp.volunteerAddresses.length;
+
+    // Get the number of available spots for an opportunity using uid
+    function getAvailableSpots(address _company, uint256 _uid) public view returns (uint256) {
+        // Find the opportunity by uid
+        Opportunity[] storage opportunities = companyOpportunities[_company];
+        for (uint256 i = 0; i < opportunities.length; i++) {
+            if (opportunities[i].uid == _uid) {
+                Opportunity storage opp = opportunities[i];
+                return opp.maxVolunteers - opp.volunteerAddresses.length;
+            }
+        }
+        revert("Opportunity not found");
     }
 
     // Get all opportunities created by a company
@@ -119,24 +146,83 @@ contract CompanyRegistry {
         return companyOpportunities[_company];
     }
 
-    // Delete a volunteering opportunity
-    function deleteOpportunity(uint256 _index) public {
-        require(_index < companyOpportunities[msg.sender].length, "Invalid index");
-        companyOpportunities[msg.sender][_index] = companyOpportunities[msg.sender][companyOpportunities[msg.sender].length - 1];
-        companyOpportunities[msg.sender].pop();
+    // Get all opportunities from all companies
+    // function getAllOpportunities() public view returns (Opportunity[] memory) {
+    //     // Calculate total number of opportunities
+    //     uint256 totalOpportunitiesCount = 0;
+    //     for (uint256 i = 0; i < registeredCompanies.length; i++) {
+    //         totalOpportunitiesCount += companyOpportunities[registeredCompanies[i]].length;
+    //     }
+
+    //     // Create an array to hold all opportunities
+    //     Opportunity[] memory allOpportunities = new Opportunity[](totalOpportunitiesCount);
+    //     uint256 index = 0;
+
+    //     // Fill the allOpportunities array
+    //     for (uint256 i = 0; i < registeredCompanies.length; i++) {
+    //         Opportunity[] storage opportunities = companyOpportunities[registeredCompanies[i]];
+    //         for (uint256 j = 0; j < opportunities.length; j++) {
+    //             allOpportunities[index] = opportunities[j];
+    //             index++;
+    //         }
+    //     }
+
+    //     return allOpportunities;
+    // }
+
+    // Delete a volunteering opportunity using uid
+    function deleteOpportunity(uint256 _uid) public {
+        Opportunity[] storage opportunities = companyOpportunities[msg.sender];
+        bool opportunityFound = false;
+        uint256 opportunityIndex;
+
+        // Find the opportunity by uid
+        for (uint256 i = 0; i < opportunities.length; i++) {
+            if (opportunities[i].uid == _uid) {
+                opportunityFound = true;
+                opportunityIndex = i;
+                break; // Exit the loop once we found the opportunity
+            }
+        }
+
+        require(opportunityFound, "Opportunity not found");
+
+        // Replace the found opportunity with the last opportunity and pop the last element
+        opportunities[opportunityIndex] = opportunities[opportunities.length - 1];
+        opportunities.pop();
     }
 
-    // Volunteer removes their application
-    function removeApplication(address _company, uint256 _index) public {
-        require(_index < companyOpportunities[_company].length, "Invalid index");
+    // Volunteer removes their application using uid
+    function removeApplication(address _company, uint256 _uid) public {
+        Opportunity[] storage opportunities = companyOpportunities[_company];
+        bool opportunityFound = false;
+        uint256 opportunityIndex;
 
-        Opportunity storage opportunity = companyOpportunities[_company][_index];
+        // Find the opportunity by uid
+        for (uint256 i = 0; i < opportunities.length; i++) {
+            if (opportunities[i].uid == _uid) {
+                opportunityFound = true;
+                opportunityIndex = i;
+                break; // Exit the loop once we found the opportunity
+            }
+        }
+
+        require(opportunityFound, "Opportunity not found");
+
+        Opportunity storage opportunity = opportunities[opportunityIndex];
+        bool applicationFound = false;
+
+        // Loop to find the volunteer's address and remove it
         for (uint256 i = 0; i < opportunity.volunteerAddresses.length; i++) {
             if (opportunity.volunteerAddresses[i] == msg.sender) {
+                applicationFound = true;
+                // Replace with the last address and pop the last element
                 opportunity.volunteerAddresses[i] = opportunity.volunteerAddresses[opportunity.volunteerAddresses.length - 1];
                 opportunity.volunteerAddresses.pop();
                 break;
             }
         }
+
+        require(applicationFound, "Application not found");
     }
 }

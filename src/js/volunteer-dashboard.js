@@ -2,7 +2,7 @@ let web3;
 let contract;
 let userAddress;
 
-const contractAddress = "0x0272b8F9c5d0919934f91a6385297BA6238aF629";
+const contractAddress = "0xe1a50ebF1c76d5a83880e1f2346b8100211f4bA7";
 const contractABI = [
 	{
 		"inputs": [
@@ -45,6 +45,11 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "_maxVolunteers",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_description",
+				"type": "string"
 			}
 		],
 		"name": "addOpportunity",
@@ -80,7 +85,7 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_oppIndex",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -134,6 +139,16 @@ const contractABI = [
 		"name": "companyOpportunities",
 		"outputs": [
 			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "company",
+				"type": "address"
+			},
+			{
 				"internalType": "string",
 				"name": "companyName",
 				"type": "string"
@@ -177,6 +192,11 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "maxVolunteers",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -186,7 +206,7 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_index",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -217,7 +237,7 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_oppIndex",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -281,6 +301,16 @@ const contractABI = [
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "uid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "company",
+						"type": "address"
+					},
+					{
 						"internalType": "string",
 						"name": "companyName",
 						"type": "string"
@@ -329,6 +359,11 @@ const contractABI = [
 						"internalType": "address[]",
 						"name": "volunteerAddresses",
 						"type": "address[]"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
 					}
 				],
 				"internalType": "struct CompanyRegistry.Opportunity[]",
@@ -423,13 +458,26 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_index",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
 		"name": "removeApplication",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalOpportunities",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]
@@ -490,7 +538,7 @@ async function loadOpportunities() {
             const isApplied = await checkIfApplied(opportunity);
 
             // Get the available slots for the opportunity
-            const availableSlots = await contract.methods.getAvailableSpots(company, index).call();
+            const availableSlots = await contract.methods.getAvailableSpots(company, opportunity.uid).call();
 
             // Convert lastDateToRegister to seconds if it's in milliseconds
             const lastDateToRegister = Math.floor(opportunity.lastDateToRegister / 1000);
@@ -500,25 +548,25 @@ async function loadOpportunities() {
 
             // Display the opportunity only if it has slots available or the volunteer has already applied
             if (isRegistrationOpen && (availableSlots > 0 || isApplied)) {
-                const card = createOpportunityCard(opportunity, company, index, isApplied);
+                const card = createOpportunityCard(opportunity, isApplied);
                 opportunitiesContainer.appendChild(card);
             }
         }
     }
 }
 
-
 async function checkIfApplied(opportunity) {
     return opportunity.volunteerAddresses.includes(userAddress);
 }
 
-function createOpportunityCard(opportunity, companyAddress, index, isApplied) {
+function createOpportunityCard(opportunity, isApplied) {
     const card = document.createElement("div");
     card.className = `card ${isApplied ? "applied-card" : ""}`;
 
     card.innerHTML = `
         <h2>${opportunity.name}</h2>
         <h3>Company: ${opportunity.companyName}</h3>
+		<p>Id: ${opportunity.uid}</p>
         <p><strong>Location:</strong> ${opportunity.location}</p>
         <p><strong>Start Date:</strong> ${new Date(parseInt(opportunity.startDate)).toLocaleDateString()}</p>
         <p><strong>End Date:</strong> ${new Date(parseInt(opportunity.endDate)).toLocaleDateString()}</p>
@@ -533,25 +581,25 @@ function createOpportunityCard(opportunity, companyAddress, index, isApplied) {
     `;
 
     card.querySelector("button").onclick = () => {
-        isApplied ? removeApplication(companyAddress, index) : applyForOpportunity(companyAddress, index);
+        isApplied ? removeApplication(opportunity) : applyForOpportunity(opportunity);
     };
 
     card.querySelector(".description-btn").onclick = () => {
-        openDescriptionModal(opportunity.name, opportunity.description); // Pass both name and description
+        openDescriptionModal(opportunity); // Pass both name and description
     };
 
     return card;
 }
 
-function openDescriptionModal(opportunityName, description) {
+function openDescriptionModal(opportunity) {
     // Create modal elements
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.innerHTML = `
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h2>${opportunityName}</h2> <!-- Display opportunity name -->
-            <p>${description}</p>
+            <h2>${opportunity.name}</h2>
+            <p>${opportunity.description}</p>
         </div>
     `;
 
@@ -571,10 +619,10 @@ function openDescriptionModal(opportunityName, description) {
     };
 }
 
-async function applyForOpportunity(companyAddress, index) {
+async function applyForOpportunity(opportunity) {
     showLoading();
     try {
-        await contract.methods.applyForOpportunity(companyAddress, index).send({ from: userAddress });
+        await contract.methods.applyForOpportunity(opportunity.company, opportunity.uid).send({ from: userAddress });
         loadOpportunities();
     } catch (error) {
         console.error("Failed to apply for opportunity:", error);
@@ -583,10 +631,10 @@ async function applyForOpportunity(companyAddress, index) {
     }
 }
 
-async function removeApplication(companyAddress, index) {
+async function removeApplication(opportunity) {
     showLoading();
     try {
-        await contract.methods.removeApplication(companyAddress, index).send({ from: userAddress });
+        await contract.methods.removeApplication(opportunity.company, opportunity.uid).send({ from: userAddress });
         loadOpportunities();
     } catch (error) {
         console.error("Failed to remove application:", error);

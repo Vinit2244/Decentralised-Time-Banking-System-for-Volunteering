@@ -103,6 +103,7 @@ button {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 200px;
     position: relative;
+    height: 510px;
 }
 
 .opportunity-card button {
@@ -253,4 +254,123 @@ textarea:focus {
 #createOpportunityBtn:hover {
     background-color: #45a049; /* Darken background on hover */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhance shadow on hover */
+}
+
+/* Modal Background */
+.volunteer-list-modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+}
+
+/* Modal Content */
+.volunteer-list-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Responsive width */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px; /* Rounded corners */
+}
+
+/* Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Table Styles */
+#volunteerTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#volunteerTable th, #volunteerTable td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#volunteerTable th {
+    background-color: #4CAF50; /* Header background color */
+    color: white; /* Header text color */
+}
+
+#volunteerTable tr:hover {
+    background-color: #f1f1f1; /* Row hover effect */
+}
+
+#volunteerTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping for even rows */
+}
+
+/* Submit Button Styles */
+#SubmitVolunteerSelectionsButton {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    padding: 12px 24px; /* Increased padding for a larger click area */
+    text-align: center; /* Center the text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Allows width and height */
+    font-size: 18px; /* Larger font size for readability */
+    font-weight: bold; /* Bold text */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition effects */
+    width: 100%; /* Full width of the modal */
+}
+
+/* Hover Effect */
+#SubmitVolunteerSelectionsButton:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Focus Effect */
+#SubmitVolunteerSelectionsButton:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.5); /* Subtle shadow on focus */
+}
+
+.accept-button {
+    width: 100px; 
+    color: black; 
+    border: solid 2px; 
+    border-color: green; 
+    background-color: #aafca4;
+}
+
+.accept-button:hover {
+    color: white; 
+    background-color: green; /* Change to green on hover */
+}
+
+.reject-button {
+    width: 100px; 
+    color: black; 
+    border: solid 2px; 
+    border-color: red; 
+    background-color: #fca4b1;
+}
+
+.reject-button:hover {
+    color: white; 
+    background-color: red; /* Change to red on hover */
 }

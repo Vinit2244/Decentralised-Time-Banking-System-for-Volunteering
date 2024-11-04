@@ -1,7 +1,7 @@
 let web3;
 let contract;
 
-const contractAddress = "0x0272b8F9c5d0919934f91a6385297BA6238aF629";
+const contractAddress = "0xe1a50ebF1c76d5a83880e1f2346b8100211f4bA7";
 const contractABI = [
 	{
 		"inputs": [
@@ -44,6 +44,11 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "_maxVolunteers",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_description",
+				"type": "string"
 			}
 		],
 		"name": "addOpportunity",
@@ -79,7 +84,7 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_oppIndex",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -133,6 +138,16 @@ const contractABI = [
 		"name": "companyOpportunities",
 		"outputs": [
 			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "company",
+				"type": "address"
+			},
+			{
 				"internalType": "string",
 				"name": "companyName",
 				"type": "string"
@@ -176,6 +191,11 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "maxVolunteers",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -185,7 +205,7 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_index",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -216,7 +236,7 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_oppIndex",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -280,6 +300,16 @@ const contractABI = [
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "uid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "company",
+						"type": "address"
+					},
+					{
 						"internalType": "string",
 						"name": "companyName",
 						"type": "string"
@@ -328,6 +358,11 @@ const contractABI = [
 						"internalType": "address[]",
 						"name": "volunteerAddresses",
 						"type": "address[]"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
 					}
 				],
 				"internalType": "struct CompanyRegistry.Opportunity[]",
@@ -422,13 +457,26 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_index",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
 		"name": "removeApplication",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalOpportunities",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]

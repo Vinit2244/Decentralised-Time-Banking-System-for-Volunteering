@@ -1,7 +1,7 @@
 let web3;
 let contract;
 
-const contractAddress = "0x0272b8F9c5d0919934f91a6385297BA6238aF629";
+const contractAddress = "0xe1a50ebF1c76d5a83880e1f2346b8100211f4bA7";
 const contractABI = [
 	{
 		"inputs": [
@@ -44,6 +44,11 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "_maxVolunteers",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_description",
+				"type": "string"
 			}
 		],
 		"name": "addOpportunity",
@@ -79,7 +84,7 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_oppIndex",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -133,6 +138,16 @@ const contractABI = [
 		"name": "companyOpportunities",
 		"outputs": [
 			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "company",
+				"type": "address"
+			},
+			{
 				"internalType": "string",
 				"name": "companyName",
 				"type": "string"
@@ -176,6 +191,11 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "maxVolunteers",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -185,7 +205,7 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_index",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -216,7 +236,7 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_oppIndex",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
@@ -280,6 +300,16 @@ const contractABI = [
 			{
 				"components": [
 					{
+						"internalType": "uint256",
+						"name": "uid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "company",
+						"type": "address"
+					},
+					{
 						"internalType": "string",
 						"name": "companyName",
 						"type": "string"
@@ -328,6 +358,11 @@ const contractABI = [
 						"internalType": "address[]",
 						"name": "volunteerAddresses",
 						"type": "address[]"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
 					}
 				],
 				"internalType": "struct CompanyRegistry.Opportunity[]",
@@ -422,13 +457,26 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_index",
+				"name": "_uid",
 				"type": "uint256"
 			}
 		],
 		"name": "removeApplication",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalOpportunities",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]
@@ -504,7 +552,6 @@ async function createOpportunity() {
     }
 }
 
-// Load opportunities and display them as cards
 async function loadOpportunities() {
     const accounts = await web3.eth.getAccounts();
     try {
@@ -527,24 +574,111 @@ async function loadOpportunities() {
                 card.setAttribute("title", "Previously created opportunities");
             }
 
-            card.innerHTML = `
-                <h3>${opportunity.name}</h3>
-                <p>Location: ${opportunity.location}</p>
-                <p>Start Date: ${new Date(parseInt(opportunity.startDate)).toLocaleDateString()}</p>
-                <p>End Date: ${new Date(parseInt(opportunity.endDate)).toLocaleDateString()}</p>
-                <p>Last Date to Register: ${new Date(parseInt(opportunity.lastDateToRegister)).toLocaleDateString()}</p>
-                <p>Hours Required: ${opportunity.hoursRequired}</p>
-                <p>Points Awarded: ${opportunity.pointsAwarded}</p>
-                <p>Max Volunteers: ${opportunity.maxVolunteers}</p>
-                <p>Volunteers applied: ${opportunity.volunteerAddresses.length}</p>
-                <br>
-                <button style="background-color: #9999ff; width: 60%; position: absolute; left: 20px;" class="description-btn">Display Description</button>
-                <button onclick="deleteOpportunity(${index})" style="width: 20%;" ${isExpired ? "disabled" : ""}>&#128465;</button>
-            `;
+			card.innerHTML = `
+			<table style="width: 100%; border-collapse: collapse;">
+			  <tr>
+				<th colspan="2" style="text-align: center; padding: 10px; background-color: #f5f5f5;">
+				  <h3 style="margin: 0;">${opportunity.name}</h3>
+				</th>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Id:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${opportunity.uid}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Location:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${opportunity.location}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Start Date:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${new Date(parseInt(opportunity.startDate)).toLocaleDateString()}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>End Date:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${new Date(parseInt(opportunity.endDate)).toLocaleDateString()}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Last Date to Register:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${new Date(parseInt(opportunity.lastDateToRegister)).toLocaleDateString()}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Hours Required:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${opportunity.hoursRequired}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Points Awarded:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${opportunity.pointsAwarded}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Max Volunteers:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${opportunity.maxVolunteers}</td>
+			  </tr>
+			  <tr>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Volunteers Applied:</strong></td>
+				<td style="padding: 8px; border-bottom: 1px solid #ddd;">${opportunity.volunteerAddresses.length}</td>
+			  </tr>
+			  <tr>
+				<td colspan="2" style="margin-top: 10px; padding: 8px; text-align: center;">
+				  <div style="display: flex; justify-content: space-between; gap: 10px; align-items: center;">
+					<button 
+					  style="
+					    position: absolute;
+						left: 20px;
+						bottom: 10px;
+						background-color: #9999ff; 
+						width: 33%; 
+						padding: 8px;
+						border: none;
+						border-radius: 4px;
+						cursor: pointer;
+					  " 
+					  class="description-btn"
+					>
+					  Display Description
+					</button>
+					<button 
+					  style="
+					  position: absolute;
+						left: 107px;
+						bottom: 10px;
+						background-color: #9999ff; 
+						width: 33%; 
+						padding: 8px;
+						border: none;
+						border-radius: 4px;
+						cursor: pointer;
+					  " 
+					  onclick="showVolunteers(${opportunity.uid})"
+					>
+					  View Volunteers
+					</button>
+					<button 
+					  onclick="deleteOpportunity(${opportunity.uid})" 
+					  style="
+					    position: absolute;
+						right: 10px;
+						bottom: 10px;
+						width: 15%;
+						height: 45px;
+						padding: 8px;
+						border: none;
+						border-radius: 4px;
+						cursor: pointer;
+						background-color: ${isExpired ? '#cccccc' : '#ff4444'};
+					  " 
+					  ${isExpired ? "disabled" : ""}
+					>
+					  &#128465;
+					</button>
+				  </div>
+				</td>
+			  </tr>
+			</table>
+		  `;
 
             // Add functionality to the Display Description button
             card.querySelector(".description-btn").onclick = () => {
-                openDescriptionModal(opportunity.name, opportunity.description); // Pass both name and description
+                openDescriptionModal(opportunity); // Pass both name and description
             };
 
             container.appendChild(card);
@@ -555,15 +689,107 @@ async function loadOpportunities() {
     }
 }
 
-function openDescriptionModal(opportunityName, description) {
+async function showVolunteers(uid) {
+	const accounts = await web3.eth.getAccounts();
+	try {
+		const opportunities = await contract.methods.getOpportunities(accounts[0]).call();
+		let opportunity = null;
+
+        // Use a for loop to find the opportunity with the specified uid
+        for (let i = 0; i < opportunities.length; i++) {
+            if (opportunities[i].uid == uid) {
+                opportunity = opportunities[i];
+                break; // Exit the loop once the opportunity is found
+            }
+        }
+
+		const modal = document.getElementById("volunteerModal");
+		const tableBody = document.getElementById("volunteerTableBody");
+		const submitButton = document.getElementById("SubmitVolunteerSelectionsButton"); // Corrected the ID here
+		tableBody.innerHTML = ""; // Clear previous rows
+
+		// Check if volunteerAddresses is defined and is an array
+		if (Array.isArray(opportunity.volunteerAddresses)) {
+			if (opportunity.volunteerAddresses.length === 0) {
+				const row = document.createElement("tr");
+				row.innerHTML = `
+					<td colspan="3">No Volunteers yet!</td>
+				`;
+				tableBody.appendChild(row);
+				submitButton.style.display = "none"; // Hide the submit button
+				modal.style.display = "block"; // Show the modal
+				return;
+			}
+
+			opportunity.volunteerAddresses.forEach((address, index) => {
+				submitButton.style.display = "block"; // Hide the submit button
+				const row = document.createElement("tr");
+				row.innerHTML = `
+					<td>${address}</td>
+					<td><button onclick="showBiodata('${address}')">View Biodata</button></td>
+					<td>
+						<div style="display: flex; justify-content: space-evenly;">
+							<button class="accept-button" id='${uid}' onclick="accept(${uid})">Accept</button>  
+							<button class="reject-button" id='${uid}' onclick="reject(${uid})">Reject</button>
+						</div>
+					</td>
+				`;
+				tableBody.appendChild(row);
+			});
+
+			submitButton.disabled = false; // Enable the submit button if there are volunteers
+		} else {
+			console.error("volunteerAddresses is not an array:", opportunity.volunteerAddresses);
+			alert("No volunteers found for this opportunity.");
+			submitButton.disabled = true; // Disable the submit button in case of error
+		}
+		modal.style.display = "block"; // Show the modal
+	} catch (error) {
+		console.error(error);
+		alert("Error loading volunteers.");
+	}
+}
+
+function closeVolunteerModal() {
+    const modal = document.getElementById("volunteerModal");
+    modal.style.display = "none"; // Hide the modal
+}
+
+function showBiodata(walletAddress) {
+    // Implement the logic to fetch and display biodata for the given wallet address
+    alert("Showing biodata for " + walletAddress);
+}
+
+function submitVolunteerSelections() {
+    const selectedVolunteers = [];
+    const tableBody = document.getElementById("volunteerTableBody");
+    const rows = tableBody.querySelectorAll("tr");
+
+    rows.forEach((row) => {
+        const checkbox = row.querySelector("input[type='checkbox']");
+        if (checkbox.checked) {
+            selectedVolunteers.push(checkbox.value);
+        }
+    });
+
+    // Send selected volunteers to the backend (solidity contract)
+    console.log("Selected Volunteers:", selectedVolunteers);
+
+    // Here you can call a function to submit the selections to your contract
+    // Example: contract.methods.acceptRejectVolunteers(selectedVolunteers).send({ from: accounts[0] });
+
+    closeVolunteerModal(); // Close the modal after submission
+}
+
+function openDescriptionModal(opportunity) {
     // Create modal elements
     const modal = document.createElement("div");
     modal.className = "description-modal";
     modal.innerHTML = `
         <div class="description-modal-content">
             <span class="close-btn">&times;</span>
-            <h2>${opportunityName}</h2> <!-- Display opportunity name -->
-            <p>${description}</p>
+            <h2>${opportunity.name}</h2> <!-- Display opportunity name -->
+            <p>${opportunity.description}</p>
         </div>
     `;
 
@@ -584,7 +810,7 @@ function openDescriptionModal(opportunityName, description) {
 }
 
 // Delete an opportunity
-async function deleteOpportunity(index) {
+async function deleteOpportunity(uid) {
     const accounts = await web3.eth.getAccounts();
 
 	// Replacing the creating opportunity text with removing opportunity
@@ -596,7 +822,7 @@ async function deleteOpportunity(index) {
 
     showLoading(); // Show loading spinner
     try {
-        await contract.methods.deleteOpportunity(index).send({ from: accounts[0] });
+        await contract.methods.deleteOpportunity(uid).send({ from: accounts[0] });
         loadOpportunities();
     } catch (error) {
         console.error(error);
