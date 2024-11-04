@@ -24,12 +24,25 @@
             <input type="password" id="newCompanyPassword" placeholder="New Password">
             <button onclick="registerCompany()">Register New Company</button>
         </div>
+
+        <!-- Volunteer Login Form -->
+        <div id="volunteerLogin" style="display: none;">
+            <h2>Volunteer Login</h2>
+            <input type="text" id="volunteerUsername" placeholder="Enter Username">
+            <input type="password" id="volunteerPassword" placeholder="Enter Password">
+            <button onclick="loginVolunteer()">Login</button>
+            <p>Or register as a new volunteer:</p>
+            <input type="text" id="newVolunteerUsername" placeholder="New Username">
+            <input type="password" id="newVolunteerPassword" placeholder="New Password">
+            <textarea id="volunteerBio" placeholder="Enter a short bio"></textarea>
+            <button onclick="registerVolunteer()">Register New Volunteer</button>
+        </div>
     </div>
 
     <!-- Loading Spinner -->
     <div id="loading" class="loading" style="display: none;">
         <div class="spinner"></div>
-        <p>Registering company, please wait...</p>
+        <p>Registering, please wait...</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>

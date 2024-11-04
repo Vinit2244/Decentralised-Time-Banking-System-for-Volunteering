@@ -1,7 +1,7 @@
 let web3;
 let contract;
 
-const contractAddress = "0xe1a50ebF1c76d5a83880e1f2346b8100211f4bA7";
+const contractAddress = "0x988DDe2417a05D3b23551882619F881Fcf3332cf";
 const contractABI = [
 	{
 		"inputs": [
@@ -79,6 +79,25 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "addressToUsernameVolunteer",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_company",
 				"type": "address"
 			},
@@ -91,6 +110,64 @@ const contractABI = [
 		"name": "applyForOpportunity",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_company",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "checkCompany",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_volunteer",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "checkVolunteer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -228,6 +305,19 @@ const contractABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getAllVolunteers",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -246,6 +336,25 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_wallet",
+				"type": "address"
+			}
+		],
+		"name": "getBiodata",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -360,6 +469,16 @@ const contractABI = [
 						"type": "address[]"
 					},
 					{
+						"internalType": "int8[]",
+						"name": "accepted",
+						"type": "int8[]"
+					},
+					{
+						"internalType": "int8[]",
+						"name": "completed",
+						"type": "int8[]"
+					},
+					{
 						"internalType": "string",
 						"name": "description",
 						"type": "string"
@@ -377,11 +496,49 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			}
+		],
+		"name": "getTotalPoints",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_wallet",
 				"type": "address"
 			}
 		],
 		"name": "getUsernameByAddress",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_wallet",
+				"type": "address"
+			}
+		],
+		"name": "getUsernameByAddressVolunteer",
 		"outputs": [
 			{
 				"internalType": "string",
@@ -417,6 +574,25 @@ const contractABI = [
 				"internalType": "string",
 				"name": "_username",
 				"type": "string"
+			}
+		],
+		"name": "isVolunteerRegisteredByUsername",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -432,12 +608,54 @@ const contractABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_bio",
+				"type": "string"
+			}
+		],
+		"name": "registerVolunteer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
 		],
 		"name": "registeredCompanies",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "registeredVolunteers",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -478,13 +696,70 @@ const contractABI = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "usernameToAddressVolunteer",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "volunteers",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "password",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "wallet",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "bio",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	}
 ]
 
 window.addEventListener('load', async () => {
     if (typeof window.ethereum !== 'undefined') {
         web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
+		try {
+			const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+		} catch (error) {
+			console.error('Error connecting to MetaMask:', error);
+		}
         contract = new web3.eth.Contract(contractABI, contractAddress);
         loadOpportunities(); // Load opportunities on page load
     } else {
@@ -726,7 +1001,7 @@ async function showVolunteers(uid) {
 				const row = document.createElement("tr");
 				row.innerHTML = `
 					<td>${address}</td>
-					<td><button onclick="showBiodata('${address}')">View Biodata</button></td>
+					<td><button class="biodata-btn">Show Biodata</button></td>
 					<td>
 						<div style="display: flex; justify-content: space-evenly;">
 							<button class="accept-button" id='${uid}' onclick="accept(${uid})">Accept</button>  
@@ -734,6 +1009,10 @@ async function showVolunteers(uid) {
 						</div>
 					</td>
 				`;
+				// Add functionality to the Show Biodata button
+				row.querySelector(".biodata-btn").onclick = () => {
+					openBiodataModal(address); // Pass both name and description
+				};
 				tableBody.appendChild(row);
 			});
 
@@ -753,11 +1032,6 @@ async function showVolunteers(uid) {
 function closeVolunteerModal() {
     const modal = document.getElementById("volunteerModal");
     modal.style.display = "none"; // Hide the modal
-}
-
-function showBiodata(walletAddress) {
-    // Implement the logic to fetch and display biodata for the given wallet address
-    alert("Showing biodata for " + walletAddress);
 }
 
 function submitVolunteerSelections() {
@@ -807,6 +1081,45 @@ function openDescriptionModal(opportunity) {
             document.body.removeChild(modal);
         }
     };
+}
+
+async function openBiodataModal(address) {
+    try {
+        // Fetch biodata and total points from the backend
+		const biodata = await contract.methods.getBiodata(address).call();
+		const totalPoints = await contract.methods.getTotalPoints(address).call();
+		const username = await contract.methods.getUsernameByAddressVolunteer(address).call();
+
+        // Create modal elements
+        const modal = document.createElement("div");
+        modal.className = "biodata-modal";
+        modal.innerHTML = `
+            <div class="biodata-modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>${username}</h2>
+                <p><strong>Bio:</strong> ${biodata}</p>
+                <p><strong>Total Points:</strong> ${totalPoints}</p>
+            </div>
+        `;
+
+        // Append modal to body
+        document.body.appendChild(modal);
+
+        // Close button functionality
+        modal.querySelector(".close-btn").onclick = () => {
+            document.body.removeChild(modal);
+        };
+
+        // Close modal when clicking outside of the modal content
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                document.body.removeChild(modal);
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching biodata:', error);
+        alert('Failed to fetch biodata. Please try again later.');
+    }
 }
 
 // Delete an opportunity

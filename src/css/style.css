@@ -208,6 +208,30 @@ button {
     position: relative; /* To position the close button */
 }
 
+.biodata-modal {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark background for overlay */
+}
+
+.biodata-modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px; /* Maximum width of the popup */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+    position: relative; /* To position the close button */
+}
+
 .close-btn {
     color: #aaa;
     float: right;

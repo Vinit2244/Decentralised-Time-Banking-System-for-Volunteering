@@ -1,7 +1,7 @@
 let web3;
 let contract;
 
-const contractAddress = "0xe1a50ebF1c76d5a83880e1f2346b8100211f4bA7";
+const contractAddress = "0x988DDe2417a05D3b23551882619F881Fcf3332cf";
 const contractABI = [
 	{
 		"inputs": [
@@ -79,6 +79,25 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "addressToUsernameVolunteer",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_company",
 				"type": "address"
 			},
@@ -91,6 +110,64 @@ const contractABI = [
 		"name": "applyForOpportunity",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_company",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "checkCompany",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_volunteer",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "checkVolunteer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -228,6 +305,19 @@ const contractABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getAllVolunteers",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -246,6 +336,25 @@ const contractABI = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_wallet",
+				"type": "address"
+			}
+		],
+		"name": "getBiodata",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -360,6 +469,16 @@ const contractABI = [
 						"type": "address[]"
 					},
 					{
+						"internalType": "int8[]",
+						"name": "accepted",
+						"type": "int8[]"
+					},
+					{
+						"internalType": "int8[]",
+						"name": "completed",
+						"type": "int8[]"
+					},
+					{
 						"internalType": "string",
 						"name": "description",
 						"type": "string"
@@ -377,11 +496,49 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			}
+		],
+		"name": "getTotalPoints",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_wallet",
 				"type": "address"
 			}
 		],
 		"name": "getUsernameByAddress",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_wallet",
+				"type": "address"
+			}
+		],
+		"name": "getUsernameByAddressVolunteer",
 		"outputs": [
 			{
 				"internalType": "string",
@@ -417,6 +574,25 @@ const contractABI = [
 				"internalType": "string",
 				"name": "_username",
 				"type": "string"
+			}
+		],
+		"name": "isVolunteerRegisteredByUsername",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -432,12 +608,54 @@ const contractABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_bio",
+				"type": "string"
+			}
+		],
+		"name": "registerVolunteer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
 		],
 		"name": "registeredCompanies",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "registeredVolunteers",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -478,23 +696,76 @@ const contractABI = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "usernameToAddressVolunteer",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "volunteers",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "password",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "wallet",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "bio",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	}
 ]
 
 window.addEventListener('load', async () => {
     if (typeof window.ethereum !== 'undefined') {
         web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
+		try {
+			const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+			console.log('Connected accounts:', accounts);
+		} catch (error) {
+			console.error('Error connecting to MetaMask:', error);
+		}
         contract = new web3.eth.Contract(contractABI, contractAddress);
     } else {
         alert("Please install MetaMask to use this app.");
     }
 });
-
-// Show volunteer login and redirect to volunteer-dashboard
-function showVolunteerLogin() {
-    window.location.href = "./html/volunteer-dashboard.html"; // Redirect to the volunteer dashboard page
-}
 
 function showCompanyLogin() {
     document.getElementById("companyLogin").style.display = "block";
@@ -508,6 +779,31 @@ function showLoading() {
 // Hide loading spinner
 function hideLoading() {
     document.getElementById("loading").style.display = "none";
+}
+
+// Show volunteer login and registration
+function showVolunteerLogin() {
+    document.getElementById("volunteerLogin").style.display = "block";
+}
+
+// Function to register a new volunteer
+async function registerVolunteer() {
+    const username = document.getElementById("newVolunteerUsername").value;
+    const password = document.getElementById("newVolunteerPassword").value;
+    const bio = document.getElementById("volunteerBio").value;
+
+    const accounts = await web3.eth.getAccounts();
+    try {
+        showLoading(); // Show loading spinner
+        await contract.methods.registerVolunteer(username, password, bio)
+            .send({ from: accounts[0] });
+        alert("Volunteer registered successfully.");
+    } catch (error) {
+        console.error(error);
+        alert("Error registering volunteer: " + error.message);
+    } finally {
+        hideLoading(); // Hide loading spinner after registration attempt
+    }
 }
 
 // Function to register a new company
@@ -541,12 +837,41 @@ async function loginCompany() {
             return;
         }
 
-        const companyDetails = await contract.methods.getCompanyByUsername(username).call();
-        const registeredPassword = companyDetails["password"];
-		console.log(registeredPassword)
+        const accounts = await web3.eth.getAccounts();
+		const acc = accounts[0];
 
-        if (registeredPassword === password) {
-            window.location.href = "./html/dashboard.html";
+        const validCompany = await contract.methods.checkCompany(acc, username, password).call();
+
+        if (validCompany) {
+            window.location.href = "./html/dashboard.html"; // Redirect to volunteer dashboard
+        } else {
+            alert("Invalid password.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error logging in: " + error.message);
+    }
+}
+
+// Function to log in a volunteer
+async function loginVolunteer() {
+    const username = document.getElementById("volunteerUsername").value;
+    const password = document.getElementById("volunteerPassword").value;
+
+    try {
+        const volunteerExists = await contract.methods.isVolunteerRegisteredByUsername(username).call();
+        if (!volunteerExists) {
+            alert("Volunteer not found.");
+            return;
+        }
+
+		const accounts = await web3.eth.getAccounts();
+		const acc = accounts[0];
+
+        const validVolunteer = await contract.methods.checkVolunteer(acc, username, password).call();
+
+        if (validVolunteer) {
+            window.location.href = "./html/volunteer-dashboard.html"; // Redirect to volunteer dashboard
         } else {
             alert("Invalid password.");
         }
