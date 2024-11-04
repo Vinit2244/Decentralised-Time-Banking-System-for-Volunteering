@@ -1,8 +1,26 @@
 let web3;
 let contract;
 
-const contractAddress = "0x988DDe2417a05D3b23551882619F881Fcf3332cf";
+const contractAddress = "0xE043b85D30DC2871a0De9fE457d980a0276D7Da9";
 const contractABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "acceptApplication",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
 	{
 		"inputs": [
 			{
@@ -312,6 +330,30 @@ const contractABI = [
 				"internalType": "address[]",
 				"name": "",
 				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "getApplicationStatus",
+		"outputs": [
+			{
+				"internalType": "int8",
+				"name": "",
+				"type": "int8"
 			}
 		],
 		"stateMutability": "view",
@@ -670,6 +712,24 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "rejectApplication",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_company",
 				"type": "address"
 			},
@@ -965,10 +1025,10 @@ async function loadOpportunities() {
 }
 
 async function showVolunteers(uid) {
-	const accounts = await web3.eth.getAccounts();
-	try {
-		const opportunities = await contract.methods.getOpportunities(accounts[0]).call();
-		let opportunity = null;
+    const accounts = await web3.eth.getAccounts();
+    try {
+        const opportunities = await contract.methods.getOpportunities(accounts[0]).call();
+        let opportunity = null;
 
         // Use a for loop to find the opportunity with the specified uid
         for (let i = 0; i < opportunities.length; i++) {
@@ -978,81 +1038,130 @@ async function showVolunteers(uid) {
             }
         }
 
-		const modal = document.getElementById("volunteerModal");
-		const tableBody = document.getElementById("volunteerTableBody");
-		const submitButton = document.getElementById("SubmitVolunteerSelectionsButton"); // Corrected the ID here
-		tableBody.innerHTML = ""; // Clear previous rows
+        const modal = document.getElementById("volunteerModal");
+        const tableBody = document.getElementById("volunteerTableBody");
+        tableBody.innerHTML = ""; // Clear previous rows
 
-		// Check if volunteerAddresses is defined and is an array
-		if (Array.isArray(opportunity.volunteerAddresses)) {
-			if (opportunity.volunteerAddresses.length === 0) {
-				const row = document.createElement("tr");
-				row.innerHTML = `
-					<td colspan="3">No Volunteers yet!</td>
-				`;
-				tableBody.appendChild(row);
-				submitButton.style.display = "none"; // Hide the submit button
-				modal.style.display = "block"; // Show the modal
-				return;
-			}
+        // Check if volunteerAddresses is defined and is an array
+        if (Array.isArray(opportunity.volunteerAddresses)) {
+            if (opportunity.volunteerAddresses.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td colspan="3">No Volunteers yet!</td>
+                `;
+                tableBody.appendChild(row);
+                modal.style.display = "block"; // Show the modal
+                return;
+            }
 
-			opportunity.volunteerAddresses.forEach((address, index) => {
-				submitButton.style.display = "block"; // Hide the submit button
-				const row = document.createElement("tr");
-				row.innerHTML = `
-					<td>${address}</td>
-					<td><button class="biodata-btn">Show Biodata</button></td>
-					<td>
-						<div style="display: flex; justify-content: space-evenly;">
-							<button class="accept-button" id='${uid}' onclick="accept(${uid})">Accept</button>  
-							<button class="reject-button" id='${uid}' onclick="reject(${uid})">Reject</button>
-						</div>
-					</td>
-				`;
-				// Add functionality to the Show Biodata button
-				row.querySelector(".biodata-btn").onclick = () => {
-					openBiodataModal(address); // Pass both name and description
-				};
-				tableBody.appendChild(row);
-			});
+            // Iterate over volunteer addresses to fetch their application status
+            for (const address of opportunity.volunteerAddresses) {
+                // Fetch application status for the volunteer
+                const status = await contract.methods.getApplicationStatus(address, uid).call();
 
-			submitButton.disabled = false; // Enable the submit button if there are volunteers
-		} else {
-			console.error("volunteerAddresses is not an array:", opportunity.volunteerAddresses);
-			alert("No volunteers found for this opportunity.");
-			submitButton.disabled = true; // Disable the submit button in case of error
-		}
-		modal.style.display = "block"; // Show the modal
-	} catch (error) {
-		console.error(error);
-		alert("Error loading volunteers.");
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${address}</td>
+                    <td><button class="biodata-btn">Show Biodata</button></td>
+                    <td>
+                        <div style="display: flex; justify-content: space-evenly;">
+                            ${getActionButtons(status, uid, address)}
+                        </div>
+                    </td>
+                `;
+
+                // Add functionality to the Show Biodata button
+                row.querySelector(".biodata-btn").onclick = () => {
+                    openBiodataModal(address); // Pass both name and description
+                };
+                tableBody.appendChild(row);
+            }
+
+        } else {
+            console.error("volunteerAddresses is not an array:", opportunity.volunteerAddresses);
+            alert("No volunteers found for this opportunity.");
+        }
+        modal.style.display = "block"; // Show the modal
+    } catch (error) {
+        console.error(error);
+        alert("Error loading volunteers.");
+    }
+}
+
+// Function to get the action buttons based on the application status
+function getActionButtons(status, uid, address) {
+    if (status === "1") { // Accepted
+        return `<span>Accepted</span>`;
+    } else if (status === "0") { // Rejected
+        return `<span>Rejected</span>`;
+    } else if (status === "-1") { // Pending
+        return `
+            <button class="accept-button" id='accept-${uid}' onclick="accept('${address}', ${uid})">Accept</button>
+            <button class="reject-button" id='reject-${uid}' onclick="reject('${address}', ${uid})">Reject</button>
+        `;
+    } else {
+        return `<span>Status unknown</span>`;
+    }
+}
+
+
+async function accept(volunteerAddress, uid) {
+    try {
+		showLoading();
+        // Call the backend accept function
+		const accounts = await web3.eth.getAccounts();
+        const result = await contract.methods.acceptApplication(volunteerAddress, uid).send({ from: accounts[0] });
+
+        // Check if the transaction was successful
+        if (result.status) {
+			console.log("Accepted");
+			showVolunteers(uid);
+            // // Change styling of the accept button
+            // const acceptButton = document.getElementById(`accept-${uid}`);
+            // acceptButton.innerText = "Accepted";
+            // acceptButton.classList.add("accepted"); // Add a class for styling
+
+            // // Optionally disable the button after acceptance
+            // acceptButton.disabled = true;
+
+            // // Also, change the reject button's styling if needed
+            // const rejectButton = document.querySelector(`#reject-${uid}`);
+            // if (rejectButton) {
+            //     rejectButton.disabled = true; // Disable the reject button
+            // }
+        }
+    } catch (error) {
+        console.error("Error accepting application:", error);
+        alert("Failed to accept the application. Please try again.");
+    } finally {
+		hideLoading();
 	}
 }
+
+async function reject(volunteerAddress, uid) {
+    try {
+		showLoading();
+        // Call the backend reject function
+		const accounts = await web3.eth.getAccounts();
+        const result = await contract.methods.rejectApplication(volunteerAddress, uid).send({ from: accounts[0] });
+
+        // Check if the transaction was successful
+        if (result.status) {
+			console.log("Rejected");
+			showVolunteers(uid);
+        }
+    } catch (error) {
+        console.error("Error rejecting application:", error);
+        alert("Failed to reject the application. Please try again.");
+    } finally {
+		hideLoading();
+	}
+}
+
 
 function closeVolunteerModal() {
     const modal = document.getElementById("volunteerModal");
     modal.style.display = "none"; // Hide the modal
-}
-
-function submitVolunteerSelections() {
-    const selectedVolunteers = [];
-    const tableBody = document.getElementById("volunteerTableBody");
-    const rows = tableBody.querySelectorAll("tr");
-
-    rows.forEach((row) => {
-        const checkbox = row.querySelector("input[type='checkbox']");
-        if (checkbox.checked) {
-            selectedVolunteers.push(checkbox.value);
-        }
-    });
-
-    // Send selected volunteers to the backend (solidity contract)
-    console.log("Selected Volunteers:", selectedVolunteers);
-
-    // Here you can call a function to submit the selections to your contract
-    // Example: contract.methods.acceptRejectVolunteers(selectedVolunteers).send({ from: accounts[0] });
-
-    closeVolunteerModal(); // Close the modal after submission
 }
 
 function openDescriptionModal(opportunity) {

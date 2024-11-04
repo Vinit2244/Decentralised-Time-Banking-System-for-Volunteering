@@ -2,8 +2,26 @@ let web3;
 let contract;
 let userAddress;
 
-const contractAddress = "0x988DDe2417a05D3b23551882619F881Fcf3332cf";
+const contractAddress = "0xE043b85D30DC2871a0De9fE457d980a0276D7Da9";
 const contractABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "acceptApplication",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
 	{
 		"inputs": [
 			{
@@ -313,6 +331,30 @@ const contractABI = [
 				"internalType": "address[]",
 				"name": "",
 				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "getApplicationStatus",
+		"outputs": [
+			{
+				"internalType": "int8",
+				"name": "",
+				"type": "int8"
 			}
 		],
 		"stateMutability": "view",
@@ -671,6 +713,24 @@ const contractABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "rejectApplication",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_company",
 				"type": "address"
 			},
@@ -781,33 +841,20 @@ async function initWeb3() {
     loadOpportunities();
 }
 
-// async function loadOpportunities() {
-//     const opportunitiesContainer = document.getElementById("opportunities-container");
-//     opportunitiesContainer.innerHTML = ""; // Clear any existing content
-
-//     const companies = await contract.methods.getAllCompanies().call();
-//     for (let company of companies) {
-//         const opportunities = await contract.methods.getOpportunities(company).call();
-
-//         opportunities.forEach(async (opportunity, index) => {
-//             const isApplied = await checkIfApplied(opportunity);
-//             const card = createOpportunityCard(opportunity, company, index, isApplied);
-//             opportunitiesContainer.appendChild(card);
-//         });
-//     }
-// }
-
 async function loadOpportunities() {
     const opportunitiesContainer = document.getElementById("opportunities-container");
     opportunitiesContainer.innerHTML = ""; // Clear any existing content
 
     const companies = await contract.methods.getAllCompanies().call();
     const currentDate = Math.floor(Date.now() / 1000);
-    
+
+	let totalOpportunities = 0;
+
     for (let company of companies) {
         const opportunities = await contract.methods.getOpportunities(company).call();
 
         for (let index = 0; index < opportunities.length; index++) {
+
             const opportunity = opportunities[index];
 
             // Check if the volunteer has already applied
@@ -822,13 +869,42 @@ async function loadOpportunities() {
             // Check if the opportunity is still open for registration
             const isRegistrationOpen = lastDateToRegister > currentDate;
 
+            // Fetch application status if the user has applied
+            let applicationStatus = null;
+            if (isApplied) {
+                applicationStatus = await contract.methods.getApplicationStatus(userAddress, opportunity.uid).call();
+            }
+
+			console.log("Application Status: ", applicationStatus);
+
+            // Determine card background color based on application status
+            let cardColor;
+            if (applicationStatus == -1) {
+                cardColor = '#f5af7d'; // Pending
+            } else if (applicationStatus == 1) {
+                cardColor = '#7ff57d'; // Accepted
+            } else if (applicationStatus == 0) {
+                cardColor = '#f57d89'; // Rejected (not similar to expired but red scale)
+            } else {
+                // Default color if no application status
+                cardColor = 'white'; // No application
+            }
+
             // Display the opportunity only if it has slots available or the volunteer has already applied
             if (isRegistrationOpen && (availableSlots > 0 || isApplied)) {
+				totalOpportunities++;
                 const card = createOpportunityCard(opportunity, isApplied);
+                card.style.backgroundColor = cardColor; // Set the background color of the card
                 opportunitiesContainer.appendChild(card);
             }
         }
     }
+
+	if (totalOpportunities === 0) {
+		const noOpportunities = document.createElement("p");
+		noOpportunities.textContent = "No opportunities available at the moment.";
+		opportunitiesContainer.appendChild(noOpportunities);
+	}
 }
 
 async function checkIfApplied(opportunity) {

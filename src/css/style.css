@@ -260,6 +260,7 @@ textarea:focus {
 }
 
 #createOpportunityBtn {
+    z-index: 1000;
     position: fixed; /* Keep the button fixed on the viewport */
     right: 30px; /* Distance from the right */
     bottom: 30px; /* Distance from the bottom */
