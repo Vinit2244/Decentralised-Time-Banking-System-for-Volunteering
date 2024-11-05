@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Points</title>
+    <link rel="stylesheet" href="../css/points-style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <h2><img src="../media/company-icon.png" alt="Company Icon" style="width: 30px; height: 30px; vertical-align: middle;"> Volunteer Connect</h2>
+        </div>
+        <img src="../media/profile.jpg" alt="Profile" onclick="toggleDropdown()">
+        <div class="dropdown" id="dropdownMenu">
+            <a href="../index.html">Home</a>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Check Points</h1>
+        <div class="search-container">
+            <input type="text" id="accountAddress" placeholder="Enter Account Address">
+            <button onclick="fetchPoints()">Fetch Points</button>
+        </div>
+    </div>
+
+    <!-- Modal Popup for displaying points -->
+    <div id="pointsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <p id="modalPointsDisplay"></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById("dropdownMenu");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.header img')) {
+                const dropdowns = document.getElementsByClassName("dropdown");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

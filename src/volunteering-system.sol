@@ -20,7 +20,7 @@ contract CompanyRegistry {
         uint256 hoursRequired;
         uint256 pointsAwarded;
         uint256 maxVolunteers;
-        address[] volunteerAddresses;
+        address[] volunteerAddresses; // List of volunteers who applied
         int8[] accepted; // -1 = pending, 0 = rejected, 1 = accepted
         int8[] completed; // 0 = incomplete, 1 = complete
         string description;
@@ -91,6 +91,8 @@ contract CompanyRegistry {
 
     // Function to calculate total points for a volunteer
     function getTotalPoints(address volunteerAddress) public view returns (uint256) {
+        require(bytes(addressToUsernameVolunteer[volunteerAddress]).length > 0, "No volunteer registered with that address");
+
         Volunteer storage volunteer = volunteers[volunteerAddress];
         uint256 totalPoints = 0;
         
@@ -99,7 +101,6 @@ contract CompanyRegistry {
             uint256 opportunityId = volunteer.opportunityIds[i];
             totalPoints += volunteer.points[opportunityId];
         }
-        
         return totalPoints;
     }
 
@@ -291,6 +292,52 @@ contract CompanyRegistry {
         }
 
         require(opportunityFound, "Opportunity not found");
+    }
+
+    function completeOpportunity(address volunteerAddress, uint256 uid) public {
+        // Ensure the volunteer exists
+        require(volunteers[volunteerAddress].wallet == volunteerAddress, "Volunteer does not exist.");
+
+        // Variable to track if the opportunity is found
+        bool opportunityFound = false;
+
+        // Loop through all companies to find the opportunity by UID
+        for (uint i = 0; i < registeredCompanies.length; i++) {
+            Opportunity[] storage opportunities = companyOpportunities[registeredCompanies[i]];
+            for (uint j = 0; j < opportunities.length; j++) {
+                if (opportunities[j].uid == uid) {
+                    Opportunity storage opportunity = opportunities[j];
+                    opportunityFound = true;
+
+                    // Find the volunteer in the list of volunteer addresses for the opportunity
+                    int volunteerIndex = -1;
+                    for (uint k = 0; k < opportunity.volunteerAddresses.length; k++) {
+                        if (opportunity.volunteerAddresses[k] == volunteerAddress) {
+                            volunteerIndex = int(k);
+                            break;
+                        }
+                    }
+                    require(volunteerIndex != -1, "Volunteer did not apply for this opportunity.");
+
+                    // Check if the volunteer was accepted
+                    require(opportunity.accepted[uint(volunteerIndex)] == 1, "Volunteer not accepted for this opportunity.");
+                    
+                    // Check if the volunteer has not already been given the reward
+                    require(opportunity.completed[uint(volunteerIndex)] == 0, "Points already credited to volunteer account.");
+
+                    // Transfer points to the volunteer's account for this opportunity
+                    volunteers[volunteerAddress].points[uid] += opportunity.pointsAwarded;
+
+                    // Mark the opportunity as completed for the volunteer
+                    opportunity.completed[uint(volunteerIndex)] = 1;
+
+                    return; // Exit after completing the operation
+                }
+            }
+        }
+        
+        // If we complete the loop without finding the opportunity, revert
+        require(opportunityFound, "Opportunity not found.");
     }
 
 

@@ -299,6 +299,24 @@ const contractABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "completeOpportunity",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_uid",
 				"type": "uint256"
@@ -826,10 +844,6 @@ window.addEventListener('load', async () => {
     }
 });
 
-function showCompanyLogin() {
-    document.getElementById("companyLogin").style.display = "block";
-}
-
 // Show loading spinner
 function showLoading() {
     document.getElementById("loading").style.display = "flex";
@@ -838,11 +852,6 @@ function showLoading() {
 // Hide loading spinner
 function hideLoading() {
     document.getElementById("loading").style.display = "none";
-}
-
-// Show volunteer login and registration
-function showVolunteerLogin() {
-    document.getElementById("volunteerLogin").style.display = "block";
 }
 
 // Function to register a new volunteer
@@ -941,3 +950,49 @@ async function loginVolunteer() {
         alert("Error logging in: " + error.message);
     }
 }
+
+async function fetchPoints() {
+    const walletAddress = document.getElementById("accountAddress").value;
+
+    if (!walletAddress) {
+        alert("Please enter a wallet address.");
+        return;
+    }
+
+    try {
+        const points = await getTotalPoints(walletAddress);
+        document.getElementById("modalPointsDisplay").textContent = `Points: ${points}`;
+        openModal();
+    } catch (error) {
+        console.error("Error fetching points:", error);
+        document.getElementById("modalPointsDisplay").textContent = "Error fetching points.";
+        openModal();
+    }
+}
+
+async function getTotalPoints(volunteerAddress) {
+    try {
+        const totalPoints = await contract.methods.getTotalPoints(volunteerAddress).call();
+        return totalPoints;
+    } catch (error) {
+        console.error("Failed to fetch points:", error);
+        throw error;
+    }
+}
+
+// Open and close modal functions
+function openModal() {
+    document.getElementById("pointsModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("pointsModal").style.display = "none";
+}
+
+// Close modal if clicked outside
+window.onclick = function(event) {
+    const modal = document.getElementById("pointsModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};

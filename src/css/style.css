@@ -103,7 +103,7 @@ button {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 200px;
     position: relative;
-    height: 420px;
+    height: 450px;
     width: 300px;
 }
 
@@ -399,4 +399,42 @@ textarea:focus {
 .reject-button:hover {
     color: white; 
     background-color: red; /* Change to red on hover */
+}
+
+/* Modal styles for Mark Present */
+.mark-present-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.mark-present-modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #000;
 }

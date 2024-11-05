@@ -121,6 +121,16 @@
         <p>Please wait...</p>
     </div>
 
+    <!-- Mark Present Modal -->
+    <div id="markPresentModal" class="mark-present-modal">
+        <div class="mark-present-modal-content">
+            <span class="close-button" onclick="closeMarkPresentModal()">&times;</span>
+            <h3>Mark Volunteer as Present</h3>
+            <input type="text" id="volunteerAddressInput" placeholder="Enter Volunteer Account Address" style="padding: 8px; width: 90%; border-radius: 20px; border: 1px solid #ddd;">
+            <button onclick="markVolunteerPresent()" style="margin-top: 15px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 20px; cursor: pointer;">Confirm</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="../js/company-dashboard.js"></script>
     <script>

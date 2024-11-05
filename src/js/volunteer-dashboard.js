@@ -300,6 +300,24 @@ const contractABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "completeOpportunity",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_uid",
 				"type": "uint256"
@@ -839,6 +857,7 @@ async function initWeb3() {
     userAddress = (await web3.eth.getAccounts())[0];
     contract = new web3.eth.Contract(contractABI, contractAddress);
     loadOpportunities();
+	// displayTotalPoints();
 }
 
 async function loadOpportunities() {
@@ -995,5 +1014,52 @@ async function removeApplication(opportunity) {
     }
 }
 
+function toggleDropdown() {
+    const dropdown = document.getElementById("dropdownMenu");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+function logout() {
+    window.location.href = "../index.html";
+}
+
+// Close dropdown if clicked outside
+window.onclick = function(event) {
+    if (!event.target.matches('.header img')) {
+        const dropdown = document.getElementById("dropdownMenu");
+        if (dropdown.style.display === "block") {
+            dropdown.style.display = "none";
+        }
+    }
+}
+
+// Fetch total points and display in the header
+async function displayTotalPoints() {
+    try {
+        const totalPoints = await getTotalPoints(userAddress);
+        document.getElementById("pointsDisplay").textContent = "Points: " + totalPoints;
+    } catch (error) {
+        console.error("Error fetching total points:", error);
+        document.getElementById("pointsDisplay").textContent = "Points: N/A";
+    }
+}
+
+// Function to simulate .getTotalPoints (replace with actual contract call)
+async function getTotalPoints(volunteerAddress) {
+    showLoading();
+    try {
+        await contract.methods.getTotalPoints(volunteerAddress).send({ from: userAddress });
+        loadOpportunities();
+    } catch (error) {
+        console.error("Failed to apply for opportunity:", error);
+    } finally {
+        hideLoading();
+    }
+}
+
+// // Call displayTotalPoints on page load
+// window.onload = displayTotalPoints;
+
 // Initialize Web3 on page load
 window.addEventListener("load", initWeb3);
+

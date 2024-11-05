@@ -299,6 +299,24 @@ const contractABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "completeOpportunity",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_uid",
 				"type": "uint256"
@@ -959,7 +977,7 @@ async function loadOpportunities() {
 					  style="
 					    position: absolute;
 						left: 20px;
-						bottom: 10px;
+						bottom: 40px;
 						background-color: #9999ff; 
 						width: 33%; 
 						padding: 8px;
@@ -975,7 +993,7 @@ async function loadOpportunities() {
 					  style="
 					  position: absolute;
 						left: 150px;
-						bottom: 10px;
+						bottom: 40px;
 						background-color: #9999ff; 
 						width: 33%; 
 						padding: 8px;
@@ -993,7 +1011,7 @@ async function loadOpportunities() {
 					  style="
 					    position: absolute;
 						right: 10px;
-						bottom: 10px;
+						bottom: 40px;
 						width: 15%;
 						height: 44px;
 						padding: 8px;
@@ -1006,6 +1024,7 @@ async function loadOpportunities() {
 					>
 					  &#128465;
 					</button>
+					<button onclick="openMarkPresentModal(${opportunity.uid})" style="width:91%; background-color: #4CAF50;">Mark Present</button>
 				  </div>
 				</td>
 			  </tr>
@@ -1105,7 +1124,6 @@ function getActionButtons(status, uid, address) {
     }
 }
 
-
 async function accept(volunteerAddress, uid) {
     try {
 		showLoading();
@@ -1158,7 +1176,6 @@ async function reject(volunteerAddress, uid) {
 		hideLoading();
 	}
 }
-
 
 function closeVolunteerModal() {
     const modal = document.getElementById("volunteerModal");
@@ -1252,5 +1269,36 @@ async function deleteOpportunity(uid) {
         alert("Error deleting opportunity.");
     } finally {
         hideLoading(); // Hide loading spinner after deletion attempt
+    }
+}
+
+let selectedOpportunityUid = null;
+
+function openMarkPresentModal(uid) {
+    selectedOpportunityUid = uid;
+    document.getElementById("markPresentModal").style.display = "block";
+}
+
+function closeMarkPresentModal() {
+    document.getElementById("markPresentModal").style.display = "none";
+    document.getElementById("volunteerAddressInput").value = ""; // Clear input
+}
+
+async function markVolunteerPresent() {
+    const volunteerAddress = document.getElementById("volunteerAddressInput").value;
+
+    if (!volunteerAddress) {
+        alert("Please enter the volunteer's account address.");
+        return;
+    }
+
+    try {
+        await contract.methods.completeOpportunity(volunteerAddress, selectedOpportunityUid).send({ from: web3.eth.defaultAccount });
+        alert("Volunteer marked as present and points transferred successfully.");
+        closeMarkPresentModal();
+        loadOpportunities(); // Reload opportunities to update any changes
+    } catch (error) {
+        console.error("Error marking volunteer as present:", error);
+        alert("Failed to mark volunteer as present.");
     }
 }
