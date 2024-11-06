@@ -901,7 +901,6 @@ async function createOpportunity() {
 }
 
 async function loadOpportunities() {
-	console.log(nonDeletableOpportunities);
     const accounts = await web3.eth.getAccounts();
     try {
         const opportunities = await contract.methods.getOpportunities(accounts[0]).call();
