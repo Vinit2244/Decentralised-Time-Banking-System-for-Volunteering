@@ -1,7 +1,7 @@
 let web3;
 let contract;
 
-const contractAddress = "0xE043b85D30DC2871a0De9fE457d980a0276D7Da9";
+const contractAddress = "0x0d7C738738970bC7f9D1Bf18267D5f9E09Af9606";
 const contractABI = [
 	{
 		"inputs": [
@@ -534,11 +534,6 @@ const contractABI = [
 						"type": "int8[]"
 					},
 					{
-						"internalType": "int8[]",
-						"name": "completed",
-						"type": "int8[]"
-					},
-					{
 						"internalType": "string",
 						"name": "description",
 						"type": "string"
@@ -866,7 +861,7 @@ async function registerVolunteer() {
         await contract.methods.registerVolunteer(username, password, bio)
             .send({ from: accounts[0] });
         alert("Volunteer registered successfully.");
-		window.location.href = './html/volunteer-login.html';
+		window.location.href = './volunteer-login.html';
     } catch (error) {
         console.error(error);
         alert("Error registering volunteer: " + error.message);
@@ -886,7 +881,7 @@ async function registerCompany() {
         await contract.methods.registerCompany(username, password)
             .send({ from: accounts[0] });
         alert("Company registered successfully.");
-		window.location.href = './html/company-login.html';
+		window.location.href = './company-login.html';
     } catch (error) {
         console.error(error);
         alert("Error registering company: " + error.message);

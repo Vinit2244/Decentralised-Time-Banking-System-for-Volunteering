@@ -21,8 +21,7 @@ contract CompanyRegistry {
         uint256 pointsAwarded;
         uint256 maxVolunteers;
         address[] volunteerAddresses; // List of volunteers who applied
-        int8[] accepted; // -1 = pending, 0 = rejected, 1 = accepted
-        int8[] completed; // 0 = incomplete, 1 = complete
+        int8[] accepted; // -1 = pending, 0 = rejected, 1 = accepted, 2 = complete
         string description;
     }
 
@@ -124,7 +123,7 @@ contract CompanyRegistry {
             }
         }
         // If no matching opportunity or volunteer found, return -1 (indicating no application)
-        return -1; 
+        return -1;
     }
 
     // Function to accept a volunteer's application for a specific opportunity
@@ -247,7 +246,6 @@ contract CompanyRegistry {
             maxVolunteers: _maxVolunteers,  // Set the maximum volunteers
             volunteerAddresses: new address[](0),
             accepted: new int8[](0),
-            completed: new int8[](0),
             description: _description
         });
 
@@ -276,7 +274,6 @@ contract CompanyRegistry {
                 // Add volunteer address to the list
                 opp.volunteerAddresses.push(msg.sender);
                 opp.accepted.push(-1);
-                opp.completed.push(0);
 
                 // Update the Volunteer structure
                 Volunteer storage volunteer = volunteers[msg.sender];
@@ -320,16 +317,13 @@ contract CompanyRegistry {
                     require(volunteerIndex != -1, "Volunteer did not apply for this opportunity.");
 
                     // Check if the volunteer was accepted
-                    require(opportunity.accepted[uint(volunteerIndex)] == 1, "Volunteer not accepted for this opportunity.");
-                    
-                    // Check if the volunteer has not already been given the reward
-                    require(opportunity.completed[uint(volunteerIndex)] == 0, "Points already credited to volunteer account.");
+                    require(opportunity.accepted[uint(volunteerIndex)] == 1, "Volunteer not accepted for this opportunity or has already been given the reward.");
 
                     // Transfer points to the volunteer's account for this opportunity
                     volunteers[volunteerAddress].points[uid] += opportunity.pointsAwarded;
 
                     // Mark the opportunity as completed for the volunteer
-                    opportunity.completed[uint(volunteerIndex)] = 1;
+                    opportunity.accepted[uint(volunteerIndex)] = 2;
 
                     return; // Exit after completing the operation
                 }
@@ -435,9 +429,7 @@ contract CompanyRegistry {
                 
                 // Remove the corresponding accepted and completed entries
                 opportunity.accepted[i] = opportunity.accepted[opportunity.accepted.length - 1];
-                opportunity.completed[i] = opportunity.completed[opportunity.completed.length - 1];
                 opportunity.accepted.pop();
-                opportunity.completed.pop();
                 
                 break;
             }

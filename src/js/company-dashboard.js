@@ -1,7 +1,7 @@
 let web3;
 let contract;
 
-const contractAddress = "0xE043b85D30DC2871a0De9fE457d980a0276D7Da9";
+const contractAddress = "0x0d7C738738970bC7f9D1Bf18267D5f9E09Af9606";
 const contractABI = [
 	{
 		"inputs": [
@@ -534,11 +534,6 @@ const contractABI = [
 						"type": "int8[]"
 					},
 					{
-						"internalType": "int8[]",
-						"name": "completed",
-						"type": "int8[]"
-					},
-					{
 						"internalType": "string",
 						"name": "description",
 						"type": "string"
@@ -906,6 +901,7 @@ async function createOpportunity() {
 }
 
 async function loadOpportunities() {
+	console.log(nonDeletableOpportunities);
     const accounts = await web3.eth.getAccounts();
     try {
         const opportunities = await contract.methods.getOpportunities(accounts[0]).call();
@@ -925,7 +921,7 @@ async function loadOpportunities() {
             if (isExpired) {
                 card.classList.add("expired-opportunity");
                 card.setAttribute("title", "Previously created opportunities");
-            }
+			}
 
 			card.innerHTML = `
 			<table style="width: 100%; border-collapse: collapse;">
@@ -1008,6 +1004,7 @@ async function loadOpportunities() {
 					</button>
 					<button 
 					  onclick="deleteOpportunity(${opportunity.uid})" 
+					  id="delete-${opportunity.uid}"
 					  style="
 					    position: absolute;
 						right: 10px;
@@ -1286,6 +1283,7 @@ function closeMarkPresentModal() {
 
 async function markVolunteerPresent() {
     const volunteerAddress = document.getElementById("volunteerAddressInput").value;
+	const accounts = await web3.eth.getAccounts();
 
     if (!volunteerAddress) {
         alert("Please enter the volunteer's account address.");
@@ -1293,12 +1291,15 @@ async function markVolunteerPresent() {
     }
 
     try {
-        await contract.methods.completeOpportunity(volunteerAddress, selectedOpportunityUid).send({ from: web3.eth.defaultAccount });
+		showLoading();
+        await contract.methods.completeOpportunity(volunteerAddress, selectedOpportunityUid).send({ from: accounts[0] });
         alert("Volunteer marked as present and points transferred successfully.");
         closeMarkPresentModal();
         loadOpportunities(); // Reload opportunities to update any changes
     } catch (error) {
         console.error("Error marking volunteer as present:", error);
         alert("Failed to mark volunteer as present.");
-    }
+    } finally {
+		hideLoading();
+	}
 }

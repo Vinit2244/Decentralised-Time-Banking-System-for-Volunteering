@@ -2,7 +2,7 @@ let web3;
 let contract;
 let userAddress;
 
-const contractAddress = "0xE043b85D30DC2871a0De9fE457d980a0276D7Da9";
+const contractAddress = "0x0d7C738738970bC7f9D1Bf18267D5f9E09Af9606";
 const contractABI = [
 	{
 		"inputs": [
@@ -535,11 +535,6 @@ const contractABI = [
 						"type": "int8[]"
 					},
 					{
-						"internalType": "int8[]",
-						"name": "completed",
-						"type": "int8[]"
-					},
-					{
 						"internalType": "string",
 						"name": "description",
 						"type": "string"
@@ -846,7 +841,6 @@ async function initWeb3() {
         web3 = new Web3(window.ethereum);
 		try {
 			const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-			console.log('Connected accounts:', accounts);
 		} catch (error) {
 			console.error('Error connecting to MetaMask:', error);
 		}
@@ -857,7 +851,7 @@ async function initWeb3() {
     userAddress = (await web3.eth.getAccounts())[0];
     contract = new web3.eth.Contract(contractABI, contractAddress);
     loadOpportunities();
-	// displayTotalPoints();
+	getTotalPoints();
 }
 
 async function loadOpportunities() {
@@ -894,7 +888,16 @@ async function loadOpportunities() {
                 applicationStatus = await contract.methods.getApplicationStatus(userAddress, opportunity.uid).call();
             }
 
-			console.log("Application Status: ", applicationStatus);
+			let completionStatus = null;
+            if (isApplied) {
+				if (applicationStatus == 2) {
+					completionStatus = 1;
+					applicationStatus = 1;
+				}
+				else if (applicationStatus == 1) {
+					completionStatus = 0;
+				}
+            }
 
             // Determine card background color based on application status
             let cardColor;
@@ -910,10 +913,12 @@ async function loadOpportunities() {
             }
 
             // Display the opportunity only if it has slots available or the volunteer has already applied
-            if (isRegistrationOpen && (availableSlots > 0 || isApplied)) {
+            if (availableSlots > 0 || isApplied) {
 				totalOpportunities++;
-                const card = createOpportunityCard(opportunity, isApplied);
-                card.style.backgroundColor = cardColor; // Set the background color of the card
+                const card = createOpportunityCard(opportunity, isApplied, completionStatus, isRegistrationOpen);
+				if (!completionStatus && isRegistrationOpen) {
+					card.style.backgroundColor = cardColor; // Set the background color of the card
+				}
                 opportunitiesContainer.appendChild(card);
             }
         }
@@ -930,14 +935,22 @@ async function checkIfApplied(opportunity) {
     return opportunity.volunteerAddresses.includes(userAddress);
 }
 
-function createOpportunityCard(opportunity, isApplied) {
+function createOpportunityCard(opportunity, isApplied, isCompleted, isRegistrationOpen) {
+    // If registration is closed and the user hasn't applied, don't display the card
+    if (!isRegistrationOpen && !isApplied) {
+        const card = document.createElement("div");
+		card.style.display = "none";
+		return card;
+    }
+
     const card = document.createElement("div");
     card.className = `card ${isApplied ? "applied-card" : ""}`;
+    const nameText = isCompleted ? `${opportunity.name} (Completed)` : opportunity.name;
 
     card.innerHTML = `
-        <h2>${opportunity.name}</h2>
+        <h2>${nameText}</h2>
         <h3>Company: ${opportunity.companyName}</h3>
-		<p>Id: ${opportunity.uid}</p>
+        <p>Id: ${opportunity.uid}</p>
         <p><strong>Location:</strong> ${opportunity.location}</p>
         <p><strong>Start Date:</strong> ${new Date(parseInt(opportunity.startDate)).toLocaleDateString()}</p>
         <p><strong>End Date:</strong> ${new Date(parseInt(opportunity.endDate)).toLocaleDateString()}</p>
@@ -951,13 +964,22 @@ function createOpportunityCard(opportunity, isApplied) {
         <button class="description-btn">Display Description</button>
     `;
 
-    card.querySelector("button").onclick = () => {
-        isApplied ? removeApplication(opportunity) : applyForOpportunity(opportunity);
-    };
-
-    card.querySelector(".description-btn").onclick = () => {
-        openDescriptionModal(opportunity); // Pass both name and description
-    };
+    // Apply styles and disable interactions based on opportunity status
+    if (isCompleted || !isRegistrationOpen) {
+        card.style.backgroundColor = "#d3d3d3"; // Gray background for past/completed opportunities
+        card.querySelectorAll("button").forEach(button => button.style.display = "none"); // Hide buttons
+        if (isCompleted) {
+            card.style.pointerEvents = "none"; // Make the entire card non-clickable if completed
+        }
+    } else {
+        // Set up button actions for active opportunities
+        card.querySelector("button.apply-btn, button.remove-btn").onclick = () => {
+            isApplied ? removeApplication(opportunity) : applyForOpportunity(opportunity);
+        };
+        card.querySelector(".description-btn").onclick = () => {
+            openDescriptionModal(opportunity);
+        };
+    }
 
     return card;
 }
@@ -1033,32 +1055,16 @@ window.onclick = function(event) {
     }
 }
 
-// Fetch total points and display in the header
-async function displayTotalPoints() {
-    try {
-        const totalPoints = await getTotalPoints(userAddress);
-        document.getElementById("pointsDisplay").textContent = "Points: " + totalPoints;
-    } catch (error) {
-        console.error("Error fetching total points:", error);
-        document.getElementById("pointsDisplay").textContent = "Points: N/A";
-    }
-}
-
 // Function to simulate .getTotalPoints (replace with actual contract call)
-async function getTotalPoints(volunteerAddress) {
-    showLoading();
+async function getTotalPoints() {
     try {
-        await contract.methods.getTotalPoints(volunteerAddress).send({ from: userAddress });
-        loadOpportunities();
+        const totalPoints = await contract.methods.getTotalPoints(userAddress).call();
+		document.getElementById("pointsDisplay").textContent = "Points: " + totalPoints;
     } catch (error) {
-        console.error("Failed to apply for opportunity:", error);
-    } finally {
-        hideLoading();
+        console.error("Failed to fetch points:", error);
+        throw error;
     }
 }
-
-// // Call displayTotalPoints on page load
-// window.onload = displayTotalPoints;
 
 // Initialize Web3 on page load
 window.addEventListener("load", initWeb3);
