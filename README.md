@@ -11,8 +11,7 @@
 Smart Contract Address and ABI:
 
 ```js
-const contractAddress = "0xE043b85D30DC2871a0De9fE457d980a0276D7Da9";
-
+const contractAddress = "0x1fEb0Ec73f11376dD28d19b8EDfe8413056269a3";
 const contractABI = [
 	{
 		"inputs": [
@@ -28,6 +27,19 @@ const contractABI = [
 			}
 		],
 		"name": "acceptApplication",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "addNonDeletableOpportunity",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -173,6 +185,25 @@ const contractABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "checkNonDeletable",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "_volunteer",
 				"type": "address"
@@ -305,6 +336,24 @@ const contractABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "volunteerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "completeOpportunity",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -527,11 +576,6 @@ const contractABI = [
 						"type": "int8[]"
 					},
 					{
-						"internalType": "int8[]",
-						"name": "completed",
-						"type": "int8[]"
-					},
-					{
 						"internalType": "string",
 						"name": "description",
 						"type": "string"
@@ -635,6 +679,25 @@ const contractABI = [
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "nonDeletableOpportunitiesUids",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
