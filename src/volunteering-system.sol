@@ -42,6 +42,16 @@ contract CompanyRegistry {
     mapping(address => string) public addressToUsernameVolunteer; // Mapping from address to username
     mapping(string => address) public usernameToAddressVolunteer;
     address[] public registeredVolunteers;
+    uint256[] public nonDeletableOpportunitiesUids;
+
+    function checkNonDeletable(uint256 uid) public view returns (bool) {
+        for (uint i = 0; i < nonDeletableOpportunitiesUids.length; i++) {
+            if(nonDeletableOpportunitiesUids[i] == uid){
+                return true; // Return true if the array contains this ID
+            }
+        }
+        return false;
+    }
 
    // Register a new company
     function registerCompany(string memory _username, string memory _password) public {
@@ -324,6 +334,7 @@ contract CompanyRegistry {
 
                     // Mark the opportunity as completed for the volunteer
                     opportunity.accepted[uint(volunteerIndex)] = 2;
+                    addNonDeletableOpportunity(uid);
 
                     return; // Exit after completing the operation
                 }
@@ -332,6 +343,20 @@ contract CompanyRegistry {
         
         // If we complete the loop without finding the opportunity, revert
         require(opportunityFound, "Opportunity not found.");
+    }
+
+    // Function to add a non-deletable opportunity UID only if it doesn't already exist
+    function addNonDeletableOpportunity(uint uid) public {
+        // Check if the UID is already in the array
+        for (uint i = 0; i < nonDeletableOpportunitiesUids.length; i++) {
+            if (nonDeletableOpportunitiesUids[i] == uid) {
+                // If the UID is already present, do not add it
+                return;
+            }
+        }
+
+        // If the UID is not found, push it into the array
+        nonDeletableOpportunitiesUids.push(uid);
     }
 
 

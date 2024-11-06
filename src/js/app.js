@@ -1,7 +1,7 @@
 let web3;
 let contract;
 
-const contractAddress = "0x0d7C738738970bC7f9D1Bf18267D5f9E09Af9606";
+const contractAddress = "0x1fEb0Ec73f11376dD28d19b8EDfe8413056269a3";
 const contractABI = [
 	{
 		"inputs": [
@@ -17,6 +17,19 @@ const contractABI = [
 			}
 		],
 		"name": "acceptApplication",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "addNonDeletableOpportunity",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -149,6 +162,25 @@ const contractABI = [
 			}
 		],
 		"name": "checkCompany",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "uid",
+				"type": "uint256"
+			}
+		],
+		"name": "checkNonDeletable",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -637,6 +669,25 @@ const contractABI = [
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "nonDeletableOpportunitiesUids",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
