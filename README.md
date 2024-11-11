@@ -1,18 +1,60 @@
-# Decentralised-Time-Banking-System-for-Volunteering
+# Decentralized Time Banking System for Volunteering
 
-## How to run
-> Run the server inside the src folder
-> Open the index.html page in the browser having metamask extension
+This project has been developed as a part of the course "Blockchain and Web3 Development" for International Institute of Information Technology, Hyderabad.
 
-<span style="color: red;">Note: If you update either address/ABI of the contract don't forget to upate it in all 3 javascript files</span>
+## Problem Statement
+- **Lack of Recognition for Volunteer Contributions**: Volunteers often go unrecognized for their efforts.
+- **No Standardized Tracking Mechanism**: There is no consistent way to record volunteer hours.
+- **Limited Incentives for Volunteering**: Few motivations for continuous involvement.
+- **Lack of Transparency and Accountability**: Difficulty in maintaining trust and openness.
 
----
+## Solution
+A **Decentralized Time Banking System** that tracks and rewards volunteer efforts using blockchain technology. Volunteers earn tokens based on their time contributions, which can serve as verifiable proof of their involvement.
 
-Smart Contract Address and ABI:
+### How It Works
+- **Time Tokens**: Volunteers receive tokens proportional to their contributions.
+- **Reputation System**: Builds trust and rewards long-term engagement.
+- **Immutable Records**: Ensures secure and tamper-proof data.
 
+## Key Features
+- **Transparency**: Blockchain ensures all records are immutable and open to verification.
+- **Incentivization**: Volunteers are rewarded with tokens that represent their contribution.
+- **Verification**: A system that authenticates volunteer hours and activities.
+
+## Importance
+- **Fair Recognition of Volunteer Efforts**: Volunteers' work is acknowledged transparently.
+- **Encouraging Participation**: Incentives drive more involvement in community services.
+- **Building a Culture of Service**: Promotes continuous and impactful community engagement.
+
+## Key Technologies and Tools
+1. **Solidity**: For building smart contracts that track and manage volunteer hours.
+2. **Web3.js**: To integrate the front end with the blockchain, enabling seamless tracking and recording.
+3. **Sepolia Testnet**: Provides an immutable ledger for transparency and record-keeping.
+4. **HTML-CSS-JS**: For developing the user interface.
+5. **Metamask**: For user authentication and interaction with smart contracts.
+
+## Main Features
+- **Company and Volunteer Login**: Secure authentication for both entities.
+- **Opportunity Management**: Companies can create and manage opportunities.
+- **Volunteer Applications**: Volunteers can apply and participate in activities.
+- **Attendance Marking**: Companies can mark attendance for volunteers.
+- **Token Conversion**: A conversion rate algorithm calculates token rewards based on hours worked.
+- **User Experience Enhancements**: Includes feedback mechanisms and easy-to-use login systems.
+
+## Implementation Details
+- **Security Concerns**: Addressed through blockchain immutability and decentralized authentication.
+- **Token Allocation Model**: Defines how tokens are distributed.
+- **User Experience (UX)**: Designed to be intuitive for users interacting with blockchain.
+
+## How to run?
+- **Step 1:** `cd` to the `src` directory
+- **Step 2:** Start the python server `python3 -m http.server` or alternatively you can use the VSCode Live Server Extension to start a server to host your website locally
+- **Step 3:** Open index.html and done!
+
+## Deployment Details
 ```js
-const contractAddress = "0x1fEb0Ec73f11376dD28d19b8EDfe8413056269a3";
-const contractABI = [
+contractAddress = "0x1fEb0Ec73f11376dD28d19b8EDfe8413056269a3";
+contractABI = [
 	{
 		"inputs": [
 			{
@@ -885,4 +927,5 @@ const contractABI = [
 		"type": "function"
 	}
 ]
+
 ```
